@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if msg %}
+      <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Requester</th>
+          <th scope="col">Created</th>
+          <th scope="col">Start Day</th>
+          <th scope="col">End Day</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ msg.sender }}</td>
+          <td>{{ msg.created }}</td>
+          <td>{{ msg.start }}</td>
+          <td>{{ msg.end }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <label>Description</label>
+    <textarea class="col-md-12" rows="4" readonly>
+    {{ msg.description }}
+    </textarea>
+    <br>
+    <form method="post" action="{% url 'reply' msg.id%}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.choice}}
+        <input type="submit" value="Submit">
+    </form>
+  {% endif %}
+
+  {% if reply %}
+      <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Requester</th>
+          <th scope="col">Created</th>
+          <th scope="col">Start Day</th>
+          <th scope="col">End Day</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ reply.sender }}</td>
+          <td>{{ reply.created }}</td>
+          <td>{{ reply.start }}</td>
+          <td>{{ reply.end }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <label>Description</label>
+    <textarea class="col-md-12" rows="4" readonly>
+    {{ reply.description }}
+    </textarea>
+      <br>
+      <hr>
+    <form method="post" id="reply" action="{% url 'done_message_status' reply.id %}">
+        {% csrf_token %}
+        <button type="submit" form="reply" value="Finish">Finish</button>
+    </form>
+
+  {% endif %}
+{% endblock %}

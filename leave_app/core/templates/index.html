@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <p>
+        <h4>Please enter your request days.</h4>
+    </p>
+    <form method='post' action="{% url 'send' %}">
+        {% csrf_token %}
+        <label for="startDay">StartDay:</label>
+        <input class="form-control" type="datetime-local" id="startday" name="startday">
+        <label for="endDay">EndDay:</label>
+        <input class="form-control" type="datetime-local" id="endday" name="endday">
+        <div class="form-group">
+        <label for="exampleFormControlTextarea1">Description:</label>
+        <textarea class="form-control" name="description" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+        <label for="exampleFormControlSelect1">Subtitue select:</label>
+        <select class="form-control" id="exampleFormControlSelect1">
+            {% for emp in subtitue %}
+                <option>{{ emp.user }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <input class="btn bg-success" type="submit" value="enter">
+    </form>
+{% endblock %}
