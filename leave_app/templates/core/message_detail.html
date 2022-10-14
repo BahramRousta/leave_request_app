@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'core/base.html' %}
 
 {% block content %}
   {% if msg %}
@@ -26,7 +26,7 @@
     {{ msg.description }}
     </textarea>
     <br>
-    <form method="post" action="{% url 'reply' msg.id%}" enctype="multipart/form-data">
+    <form method="post" action="{% url 'core:reply' msg.id%}" enctype="multipart/form-data">
         {% csrf_token %}
         {{form.choice}}
         <input type="submit" value="Submit">

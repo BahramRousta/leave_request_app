@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import leave_request_view, send, reply, inbox, message_detail, dashboard, done_message_status
 
-# app_name = 'core'
+app_name = 'core'
 
 urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),

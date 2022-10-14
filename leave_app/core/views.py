@@ -15,7 +15,7 @@ def dashboard(request):
         is_reply=False
     ).count()
     number_message = reply + new_msg
-    return render(request, 'dashboard.html', {'number_message': number_message})
+    return render(request, 'core/dashboard.html', {'number_message': number_message})
 
 
 def inbox(request):
@@ -29,7 +29,7 @@ def inbox(request):
         receiver=employee,
         is_reply=False
     )
-    return render(request, 'inbox.html', {'reply': reply,
+    return render(request, 'core/inbox.html', {'reply': reply,
                                           'new_msg': new_msg})
 
 
@@ -38,10 +38,10 @@ def message_detail(request, id):
 
     if msg.is_reply:
         reply = Reply.objects.get(message_id=msg.id)
-        return render(request, 'message_detail.html', {'reply': reply})
+        return render(request, 'core/message_detail.html', {'reply': reply})
     else:
         form = CHOICES()
-        return render(request, 'message_detail.html', {'msg': msg,
+        return render(request, 'core/message_detail.html', {'msg': msg,
                                                        'form': form})
 
 
@@ -58,7 +58,7 @@ def done_message_status(request, id):
 def leave_request_view(request):
     form = TimeForm()
     subtitue = Employee.objects.all().exclude(user=request.user)
-    return render(request, 'index.html', {'subtitue': subtitue,
+    return render(request, 'core/index.html', {'subtitue': subtitue,
                                           'form': form})
 
 
@@ -121,6 +121,6 @@ def reply(request, id):
             )
             msg.is_reply = True
             msg.save()
-        return redirect('inbox')
+        return redirect('core:inbox')
     else:
-        return redirect('message_detail', id)
+        return redirect('core:message_detail', id)

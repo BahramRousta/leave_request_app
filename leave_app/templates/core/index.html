@@ -1,10 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'core/base.html' %}
 
 {% block content %}
     <p>
         <h4>Please enter your request days.</h4>
     </p>
-    <form method='post' action="{% url 'send' %}">
+    <form method='post' action="{% url 'core:send' %}">
         {% csrf_token %}
         <label for="startDay">StartDay:</label>
         <input class="form-control" type="datetime-local" id="startday" name="startday">

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'core/base.html' %}
 
 {% block content %}
     {% if new_msg %}
@@ -8,7 +8,7 @@
                     <p>Message from
                         <b>{{ msg.sender }}
                         </b>
-                        <a href="{% url 'message_detail' msg.id %}">  View</a>
+                        <a href="{% url 'core:message_detail' msg.id %}">  View</a>
                     </p>
                 </li>
             </ul>
@@ -22,7 +22,7 @@
                         <p> Message from
                             <b>{{ rpl.sender }}
                             </b>
-                            <a href="{% url 'message_detail' rpl.message.id %}">  View</a>
+                            <a href="{% url 'core:message_detail' rpl.message.id %}">  View</a>
                         </p>
                     </li>
                 </ul>
