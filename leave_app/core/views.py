@@ -11,7 +11,7 @@ from .forms import TimeForm, CHOICES
 def dashboard(request):
     user = request.user
     reply = Reply.objects.filter(
-        receiver=user,
+        message__sender=user,
         is_done=False
     ).count()
     new_msg = Message.objects.filter(
@@ -26,17 +26,16 @@ def dashboard(request):
 @login_required()
 def inbox(request):
     user = request.user
-    employee = Employee.objects.filter(user=user).first()
     reply = Reply.objects.filter(
-        receiver=employee,
+        message__sender=user,
         is_done=False
     )
     new_msg = Message.objects.filter(
-        receiver=employee,
+        receiver=user,
         is_reply=False
     )
     return render(request, 'core/inbox.html', {'reply': reply,
-                                          'new_msg': new_msg})
+                                               'new_msg': new_msg})
 
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -45,12 +44,12 @@ def message_detail(request, id):
     msg = Message.objects.get(id=id)
 
     if msg.is_reply:
-        reply = Reply.objects.get(message_id=msg.id)
+        reply = Reply.objects.filter(message_id=msg.id).order_by('id')[0]
         return render(request, 'core/message_detail.html', {'reply': reply})
     else:
         form = CHOICES()
         return render(request, 'core/message_detail.html', {'msg': msg,
-                                                       'form': form})
+                                                            'form': form})
 
 
 def done_message_status(request, id):
@@ -58,9 +57,9 @@ def done_message_status(request, id):
         msg = Reply.objects.get(id=id)
         msg.is_done = True
         msg.save()
-        return redirect('inbox')
+        return redirect('core:inbox')
     else:
-        return redirect('message_detail', id)
+        return redirect('core:message_detail', id)
 
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -69,7 +68,7 @@ def leave_request_view(request):
     form = TimeForm()
     subtitue = Employee.objects.all().exclude(user=request.user)
     return render(request, 'core/index.html', {'subtitue': subtitue,
-                                          'form': form})
+                                               'form': form})
 
 
 @login_required()
@@ -106,7 +105,7 @@ def send(request):
                                          end=end_msg,
                                          description=description,
                                          is_reply=False)
-        return HttpResponse('Message successfully send')
+        return render(request, 'core/send_message.html')
     else:
         return HttpResponse('leave_request_view')
 
@@ -122,14 +121,9 @@ def reply(request, id):
             selected = form.cleaned_data.get("choice")
             msg.manager_choice = selected
             reply_msg = Reply.objects.create(
-                message_id=msg.id,
-                receiver=msg.sender,
-                start=msg.start,
-                end=msg.end,
-                sender=employee,
-                description=msg.description,
+                message=msg,
                 manager_choice=selected,
-                is_done=True
+                is_done=False
             )
             msg.is_reply = True
             msg.save()

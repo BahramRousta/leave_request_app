@@ -41,25 +41,33 @@
           <th scope="col">Created</th>
           <th scope="col">Start Day</th>
           <th scope="col">End Day</th>
+          <th scope="col">ID</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>{{ reply.sender }}</td>
-          <td>{{ reply.created }}</td>
-          <td>{{ reply.start }}</td>
-          <td>{{ reply.end }}</td>
+          <td>{{ reply.message.sender }}</td>
+          <td>{{ reply.message.created }}</td>
+          <td>{{ reply.message.start }}</td>
+          <td>{{ reply.message.end }}</td>
+          <td>{{ reply.message.id }}</td>
         </tr>
       </tbody>
     </table>
     <br>
     <label>Description</label>
     <textarea class="col-md-12" rows="4" readonly>
-    {{ reply.description }}
+    {{ reply.message.description }}
     </textarea>
       <br>
       <hr>
-    <form method="post" id="reply" action="{% url 'done_message_status' reply.id %}">
+      <p>
+        Manager choice is:
+        <b>{{ reply.manager_choice }}</b>
+      </p>
+      <br>
+      <hr>
+    <form method="post" id="reply" action="{% url 'core:done_message_status' id=reply.id %}">
         {% csrf_token %}
         <button type="submit" form="reply" value="Finish">Finish</button>
     </form>

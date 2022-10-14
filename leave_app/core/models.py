@@ -61,19 +61,9 @@ class Message(models.Model):
 
 
 class Reply(models.Model):
-    message = models.OneToOneField(Message, on_delete=models.CASCADE)
-    start = models.DateTimeField()
-    end = models.DateTimeField()
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    sender = models.CharField(max_length=100)
-    receiver = models.CharField(max_length=100)
-    description = models.TextField()
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
     manager_choice = models.CharField(max_length=10)
     is_done = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.sender} to {self.receiver}"
-
-    class Meta:
-        ordering = ('-created',)
+        return f"{self.message.receiver} to {self.message.sender}"
