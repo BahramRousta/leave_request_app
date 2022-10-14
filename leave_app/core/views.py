@@ -1,10 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.views.decorators.cache import cache_control
 from .models import Employee, Message, Reply
 from .forms import TimeForm, CHOICES
 
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required()
 def dashboard(request):
     user = request.user
@@ -19,6 +21,8 @@ def dashboard(request):
     number_message = reply + new_msg
     return render(request, 'core/dashboard.html', {'number_message': number_message})
 
+
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required()
 def inbox(request):
     user = request.user
@@ -35,6 +39,7 @@ def inbox(request):
                                           'new_msg': new_msg})
 
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required()
 def message_detail(request, id):
     msg = Message.objects.get(id=id)
@@ -58,6 +63,7 @@ def done_message_status(request, id):
         return redirect('message_detail', id)
 
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required()
 def leave_request_view(request):
     form = TimeForm()
