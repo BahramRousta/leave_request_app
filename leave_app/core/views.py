@@ -1,9 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from .models import Employee, Message, Reply
 from .forms import TimeForm, CHOICES
 
 
+@login_required()
 def dashboard(request):
     user = request.user
     reply = Reply.objects.filter(
@@ -17,7 +19,7 @@ def dashboard(request):
     number_message = reply + new_msg
     return render(request, 'core/dashboard.html', {'number_message': number_message})
 
-
+@login_required()
 def inbox(request):
     user = request.user
     employee = Employee.objects.filter(user=user).first()
@@ -33,6 +35,7 @@ def inbox(request):
                                           'new_msg': new_msg})
 
 
+@login_required()
 def message_detail(request, id):
     msg = Message.objects.get(id=id)
 
@@ -55,6 +58,7 @@ def done_message_status(request, id):
         return redirect('message_detail', id)
 
 
+@login_required()
 def leave_request_view(request):
     form = TimeForm()
     subtitue = Employee.objects.all().exclude(user=request.user)
@@ -62,6 +66,7 @@ def leave_request_view(request):
                                           'form': form})
 
 
+@login_required()
 def send(request):
     if request.method == 'POST':
         user = request.user
@@ -100,6 +105,7 @@ def send(request):
         return HttpResponse('leave_request_view')
 
 
+@login_required()
 def reply(request, id):
     user = request.user
     employee = Employee.objects.get(user=user)
