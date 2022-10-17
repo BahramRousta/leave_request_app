@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-5l5_hh)=5@n!t#6m)8*fd_m4n1!^@$1t&!#&lh@5b%t*z1$k!g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://leaverequestapp-production.up.railway.app/']
 
 
 # Application definition
