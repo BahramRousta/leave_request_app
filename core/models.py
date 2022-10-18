@@ -47,6 +47,7 @@ class Message(models.Model):
     receiver = models.CharField(max_length=100)
     description = models.TextField()
     is_reply = models.BooleanField(default=False)
+    is_done = models.BooleanField(default=False)
     CHOICE = [
         ('Agree', 'agree'),
         ('DisAgree', 'disagree')

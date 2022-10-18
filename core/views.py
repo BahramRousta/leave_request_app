@@ -40,6 +40,16 @@ def inbox(request):
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required()
+def outbox(request):
+    user = request.user
+    # get messages that status is done
+    messages = Message.objects.filter(sender=user,
+                                      is_done=True)
+    return render(request, 'core/outbox.html', {'messages': messages})
+
+
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required()
 def message_detail(request, id):
     msg = Message.objects.get(id=id)
 
@@ -55,6 +65,7 @@ def message_detail(request, id):
 def done_message_status(request, id):
     if request.method == "POST":
         msg = Reply.objects.get(id=id)
+        msg.message.is_done = True
         msg.is_done = True
         msg.save()
         return redirect('core:inbox')
