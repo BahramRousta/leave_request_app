@@ -20,5 +20,5 @@ from decouple import config
 urlpatterns = [
     path(f'{config("ADMIN")}/', admin.site.urls),
     path('', include('core.urls')),
-    path('accounts/', include('accounts.urls')),
+    path('', include('accounts.urls')),
 ]
