@@ -60,13 +60,10 @@ def outbox(request):
 @login_required()
 def message_detail(request, id):
     msg = get_object_or_404(Message, id=id)
-    print(msg)
     if msg.is_reply:
         reply = Reply.objects.filter(message_id=msg.id).order_by('id')[0]
-        print(reply)
         return render(request, 'core/message_detail.html', {'reply': reply})
     else:
-        print('hi')
         form = CHOICES()
         return render(request, 'core/message_detail.html', {'msg': msg,
                                                             'form': form})
