@@ -10,5 +10,12 @@
       <jdbc-url>jdbc:sqlite:D:\Project\prj\leave_request_prj\leave_app\db.sqlite3</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="db" uuid="56a07e2d-b524-4165-8d61-8e2bff0abd76">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\BahramRousta\Documents\GitHub\leave_request_app\db.sqlite3</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

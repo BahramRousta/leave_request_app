@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views.decorators.cache import cache_control
 from .models import Employee, Message, Reply
 from .forms import TimeForm, CHOICES
@@ -41,22 +41,32 @@ def inbox(request):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required()
 def outbox(request):
+    messages = None
+    replies = None
     user = request.user
-    # get messages that status is done
-    messages = Message.objects.filter(sender=user,
-                                      is_done=True)
-    return render(request, 'core/outbox.html', {'messages': messages})
+    employee = Employee.objects.filter(user=user).first()
+    if not employee.parent:
+        messages = Reply.objects.filter(message__receiver=employee)
+    elif employee.parent and employee.is_manager:
+        messages = Message.objects.filter(sender=employee)
+        replies = Reply.objects.filter(message__receiver=employee)
+    elif employee.parent and employee.is_expert:
+        messages = Message.objects.filter(sender=employee)
+    return render(request, 'core/outbox.html', {'messages': messages,
+                                                'replies': replies})
 
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required()
 def message_detail(request, id):
-    msg = Message.objects.get(id=id)
-
+    msg = get_object_or_404(Message, id=id)
+    print(msg)
     if msg.is_reply:
         reply = Reply.objects.filter(message_id=msg.id).order_by('id')[0]
+        print(reply)
         return render(request, 'core/message_detail.html', {'reply': reply})
     else:
+        print('hi')
         form = CHOICES()
         return render(request, 'core/message_detail.html', {'msg': msg,
                                                             'form': form})
