@@ -1,0 +1,34 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    {% if new_msg %}
+        {% for msg in new_msg %}
+            <ul>
+                <li>
+                    <p>
+                        Message from
+                        <b>
+                            {{ msg.sender }}
+                        </b>
+                        <a href="{% url 'core:message_detail' msg.id %}">  View</a>
+                    </p>
+                </li>
+            </ul>
+        {% endfor %}
+    {% endif %}
+    {% if reply %}
+        {% for rpl in reply %}
+            <form>
+                <ul>
+                    <li>
+                        <p> Message from
+                            <b>{{ rpl.message.receiver }}
+                            </b>
+                            <a href="{% url 'core:message_detail' rpl.message.id %}">  View</a>
+                        </p>
+                    </li>
+                </ul>
+            </form>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

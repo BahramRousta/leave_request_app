@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h1>
+        Welcome {{ request.user }}
+    </h1>
+    <hr>
+    <br>
+    <h2>
+        You have {{ number_message }} messages.
+    </h2>
+    <p>
+        For check this messages go to your inbox.
+    </p>
+{% endblock %}
