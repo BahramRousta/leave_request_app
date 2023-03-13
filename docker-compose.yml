@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   db:
-    image: postgres:11
+    image: postgres
     restart: always
     env_file:
       - ./.env.prod.db
@@ -11,26 +11,47 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/posgresql/data
+    networks:
+      - main
 
-  web:
+  app:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: LeaveRequest
+    container_name: app
     command: >
         sh -c "  python3 manage.py makemigrations --noinput && \
                  python3 manage.py migrate --noinput && \
                  python3 manage.py collectstatic --noinput && \
                  python3 manage.py createsuperuser --username superuser --email admin@localhost --noinput; \
                  gunicorn leave.wsgi --bind 0.0.0.0:8000"
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     env_file:
       - ./.env.prod
     volumes:
-      - ./web:/web
+      - ./web:/app
+    networks:
+      - main
     depends_on:
       - db
-  
+
+  nginx:
+    build: ./nginx
+    restart: always
+    container_name: nginx
+    volumes:
+      - ./web/static:/app/static
+      - ./web/media:/app/media
+    ports:
+      - "80:80"
+    networks:
+      - main
+    depends_on:
+      - app
+
+networks:
+  main:
+
 volumes:
   pgdata:

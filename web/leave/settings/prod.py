@@ -5,7 +5,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["192.168.1.51", "127.0.0.1"]
+ALLOWED_HOSTS = ["192.168.1.51", "127.0.0.1", "localhost", "app"]
 
 DATABASES = {
     'default': {
@@ -17,3 +17,7 @@ DATABASES = {
         'PORT': 5432,
     }
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost'
+]
