@@ -1,7 +1,7 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-  {% if msg %}
+  {% if message %}
       <table class="table">
       <thead>
         <tr>
@@ -13,22 +13,22 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{ msg.sender }}</td>
-          <td>{{ msg.created }}</td>
-          <td>{{ msg.start }}</td>
-          <td>{{ msg.end }}</td>
+          <td>{{ message.sender }}</td>
+          <td>{{ message.created }}</td>
+          <td>{{ message.start }}</td>
+          <td>{{ message.end }}</td>
         </tr>
       </tbody>
     </table>
     <br>
     <label>Description</label>
     <textarea class="col-md-12" rows="4" readonly>
-    {{ msg.description }}
+    {{ message.description }}
     </textarea>
     <br>
-    <form method="post" action="{% url 'core:reply' msg.id%}" enctype="multipart/form-data">
+    <form method="post" action="{% url 'core:reply' message.id %}" enctype="multipart/form-data">
         {% csrf_token %}
-        {{form.choice}}
+        {{form.as_p}}
         <input type="submit" value="Submit">
     </form>
   {% endif %}

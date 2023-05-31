@@ -1,16 +1,24 @@
 from django import forms
+from .models import Message, Employee
 
 
-class TimeForm(forms.Form):
-    start = forms.DateTimeField(widget=forms.DateInput)
-    end = forms.DateTimeField(widget=forms.DateInput)
+class RequestLeaveForm(forms.ModelForm):
+    substitute = forms.ModelChoiceField(queryset=None)
+
+    class Meta:
+        model = Message
+        fields = ['start', 'end', 'description', 'substitute']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')  # Get the logged-in user from the form kwargs
+        super(RequestLeaveForm, self).__init__(*args, **kwargs)
+
+        # Exclude the logged-in user from the 'substitute' field's queryset
+        self.fields['substitute'].queryset = Employee.objects.exclude(id=user.id)
 
 
-choice = [
-    ('Agree', 'agree'),
-    ('DisAgree', 'disagree')
-    ]
+class ManagerChoiceForm(forms.ModelForm):
 
-
-class CHOICES(forms.Form):
-    choice = forms.CharField(widget=forms.RadioSelect(choices=choice))
+    class Meta:
+        model = Message
+        fields = ['manager_choice']
