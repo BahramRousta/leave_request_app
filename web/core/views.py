@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.cache import cache_control
-from django.views.generic import ListView, TemplateView, CreateView, FormView
+from django.views.generic import ListView, TemplateView, CreateView, FormView, DetailView
 from .models import Employee, Message, Reply
 from .forms import RequestLeaveForm
 
@@ -52,6 +52,17 @@ class OutBoxView(ListView):
         user = self.request.user.employee
         messages = queryset.select_related('message').filter(message__sender=user)
         return {'messages': messages}
+
+
+class MessageDetailView(DetailView):
+    model = Message
+    template_name = 'core/message_detail.html'
+
+
+class ReplyDetailView(DetailView):
+    model = Reply
+    template_name = 'core/message_detail.html'
+
 
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
