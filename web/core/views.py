@@ -1,12 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
-from django.http import HttpResponse
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.decorators.cache import cache_control
 from django.views.generic import ListView, TemplateView, CreateView, FormView, DetailView
 from .models import Employee, Message, Reply
-from .forms import RequestLeaveForm
+from .forms import RequestLeaveForm, ManagerChoiceForm
 
 
 class UserDashboardView(TemplateView):
@@ -55,27 +53,25 @@ class OutBoxView(ListView):
 
 
 class MessageDetailView(DetailView):
-    model = Message
+
     template_name = 'core/message_detail.html'
 
+    def get_object(self):
+        message = Message.objects.filter(pk=self.kwargs['pk']).first()
+        if message:
+            return message
+        else:
+            return Reply.objects.filter(pk=self.kwargs['pk']).first()
 
-class ReplyDetailView(DetailView):
-    model = Reply
-    template_name = 'core/message_detail.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-
-
-@cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@login_required()
-def message_detail(request, id):
-    msg = get_object_or_404(Message, id=id)
-    if msg.is_reply:
-        reply = Reply.objects.filter(message_id=msg.id).order_by('id')[0]
-        return render(request, 'core/message_detail.html', {'reply': reply})
-    else:
-        form = CHOICES()
-        return render(request, 'core/message_detail.html', {'msg': msg,
-                                                            'form': form})
+        if isinstance(self.object, Message):
+            context['message'] = self.object
+            context['form'] = ManagerChoiceForm()
+        elif isinstance(self.object, Reply):
+            context['reply'] = self.object
+        return context
 
 
 def done_message_status(request, id):
@@ -124,23 +120,20 @@ class CreateRequestView(FormView):
         return super().form_valid(form)
 
 
-@login_required()
-def reply(request, id):
-    user = request.user
-    employee = Employee.objects.get(user=user)
-    if request.method == 'POST':
-        msg = Message.objects.get(id=id)
-        form = CHOICES(request.POST)
-        if form.is_valid():
-            selected = form.cleaned_data.get("choice")
-            msg.manager_choice = selected
-            reply_msg = Reply.objects.create(
-                message=msg,
-                manager_choice=selected,
-                is_done=False
-            )
-            msg.is_reply = True
-            msg.save()
-        return redirect('core:inbox')
-    else:
-        return redirect('core:message_detail', id)
+class ReplyOnMessageView(CreateView):
+    model = Reply
+    fields = ['manager_choice']
+    success_url = reverse_lazy('core:inbox')
+
+    def form_valid(self, form):
+        message = Message.objects.get(id=self.kwargs['pk'])
+
+        form.instance.message = message
+        form.instance.sender = self.request.user.employee
+        form.instance.receiver = message.receiver
+
+        message.is_reply = True
+        message.manager_choice = form.cleaned_data['manager_choice']
+        message.save()
+        return super().form_valid(form)
+

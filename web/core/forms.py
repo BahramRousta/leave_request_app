@@ -15,3 +15,10 @@ class RequestLeaveForm(forms.ModelForm):
 
         # Exclude the logged-in user from the 'substitute' field's queryset
         self.fields['substitute'].queryset = Employee.objects.exclude(id=user.id)
+
+
+class ManagerChoiceForm(forms.ModelForm):
+
+    class Meta:
+        model = Message
+        fields = ['manager_choice']
