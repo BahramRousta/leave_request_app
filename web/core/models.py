@@ -22,10 +22,10 @@ class Employee(models.Model):
                                 related_name='employee')
     department = models.ForeignKey(Department,
                                    on_delete=models.CASCADE,
-                                   related_name='em_dep')
+                                   related_name='employee_department')
     position = models.ForeignKey(Position,
                                  on_delete=models.CASCADE,
-                                 related_name='employee')
+                                 related_name='employee_position')
     is_manager = models.BooleanField(default=False)
     is_expert = models.BooleanField(default=True)
     parent = models.ForeignKey(User,
@@ -43,8 +43,9 @@ class Message(models.Model):
     end = models.DateTimeField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    sender = models.CharField(max_length=100)
-    receiver = models.CharField(max_length=100)
+    sender = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='message_sender')
+    receiver = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='message_receiver')
+    substitute = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='message_substitute')
     description = models.TextField()
     is_reply = models.BooleanField(default=False)
     is_done = models.BooleanField(default=False)
@@ -55,16 +56,18 @@ class Message(models.Model):
     manager_choice = models.CharField(max_length=8, choices=CHOICE)
 
     def __str__(self):
-        return f"{self.sender} to {self.receiver}"
+        return f"Message from {self.sender} to {self.receiver}"
 
     class Meta:
         ordering = ('-created',)
 
 
 class Reply(models.Model):
-    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='replies')
     manager_choice = models.CharField(max_length=10)
     is_done = models.BooleanField(default=False)
+    sender = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='reply_sender')
+    receiver = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='reply_receiver')
 
     def __str__(self):
-        return f"{self.message.receiver} to {self.message.sender}"
+        return f"Reply from {self.sender} to {self.receiver}"
