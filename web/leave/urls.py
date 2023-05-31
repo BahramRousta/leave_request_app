@@ -9,4 +9,5 @@ urlpatterns = [
     path(f'{os.environ.get("ADMIN")}/', admin.site.urls),
     path('', include('core.urls')),
     path('', include('accounts.urls')),
+    path('__debug__/', include('debug_toolbar.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
