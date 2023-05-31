@@ -1,14 +1,13 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-    {% if new_msg %}
-        {% for msg in new_msg %}
+    {% if inbox.new_msg %}
+        {% for msg in inbox.new_msg %}
             <ul>
                 <li>
                     <p>
-                        Message from
                         <b>
-                            {{ msg.sender }}
+                            {{ msg }}
                         </b>
                         <a href="{% url 'core:message_detail' msg.id %}">  View</a>
                     </p>
@@ -16,13 +15,13 @@
             </ul>
         {% endfor %}
     {% endif %}
-    {% if reply %}
-        {% for rpl in reply %}
+    {% if inbox.reply %}
+        {% for rpl in inbox.reply %}
             <form>
                 <ul>
                     <li>
-                        <p> Message from
-                            <b>{{ rpl.message.receiver }}
+                        <p>
+                            <b>{{ rpl }}
                             </b>
                             <a href="{% url 'core:message_detail' rpl.message.id %}">  View</a>
                         </p>
