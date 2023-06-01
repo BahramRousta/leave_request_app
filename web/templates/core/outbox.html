@@ -2,15 +2,20 @@
 
 {% block content %}
     <div style="margin-top: 20px;">
-    {% for reply in outbox.messages %}
+
+    {% for message in messages %}
         <p>
-            <b>{{ reply.message }}</b>
-            <a href="{% url 'core:message_detail' reply.message.id %}">  View</a>
+            <b>{{ message }}</b>
+            <a href="{% url 'core:message_detail' message.id %}">  View</a>
         </p>
+
+    {% endfor %}
+    {% for reply in replies %}
         <p>
             <b>{{ reply }}</b>
-            <a href="{% url 'core:message_detail' reply.id %}">  View</a>
+            <a href="{% url 'core:message_detail' reply.id %}">  Replies</a>
         </p>
     {% endfor %}
+
     </div>
 {% endblock %}

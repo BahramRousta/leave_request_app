@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db.models import Count, Q
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -8,6 +8,8 @@ from .forms import RequestLeaveForm, ManagerChoiceForm
 
 
 class UserDashboardView(TemplateView):
+    """Get count of user new messages."""
+
     template_name = 'core/dashboard.html'
 
     def get_context_data(self, **kwargs):
@@ -28,28 +30,39 @@ class UserDashboardView(TemplateView):
 
 
 class InboxView(ListView):
+    """Show a list of received messages."""
+
+    model = Message
     template_name = 'core/inbox.html'
-    context_object_name = 'inbox'
 
-    def get_queryset(self):
-        user = self.request.user.employee
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        employee = self.request.user.employee
 
-        new_msg = Message.objects.filter(receiver=user, is_reply=False)
-        reply = Reply.objects.filter(message__sender=user, is_done=False)
+        new_msg = self.model.objects.filter(receiver=employee, is_reply=False).all()
+        reply = Reply.objects.filter(receiver=employee, is_done=False).all()
 
-        return {'reply': reply, 'new_msg': new_msg}
+        context['new_msg'] = new_msg
+        context['reply'] = reply
+
+        return context
 
 
 class OutBoxView(ListView):
     model = Reply
     template_name = 'core/outbox.html'
-    context_object_name = 'outbox'
+
+    def get_user(self):
+        return self.request.user.employee
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        user = self.request.user.employee
-        messages = queryset.select_related('message').filter(message__sender=user)
-        return {'messages': messages}
+        return self.model.objects.filter(sender=self.get_user(), is_done=False).all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['replies'] = self.get_queryset()
+        context['messages'] = Message.objects.filter(receiver=self.get_user()).all()
+        return context
 
 
 class MessageDetailView(DetailView):
