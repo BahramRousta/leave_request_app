@@ -1,8 +1,7 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-    {% if inbox.new_msg %}
-        {% for msg in inbox.new_msg %}
+        {% for msg in new_msg %}
             <ul>
                 <li>
                     <p>
@@ -14,9 +13,7 @@
                 </li>
             </ul>
         {% endfor %}
-    {% endif %}
-    {% if inbox.reply %}
-        {% for rpl in inbox.reply %}
+        {% for rpl in reply %}
             <form>
                 <ul>
                     <li>
@@ -29,5 +26,4 @@
                 </ul>
             </form>
         {% endfor %}
-    {% endif %}
 {% endblock %}
